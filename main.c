@@ -36,7 +36,7 @@
 
 #ifndef lint
 static char copyright[] =
-"@(#) Copyright (c) 1988, 1993\n\
+    "@(#) Copyright (c) 1988, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 #endif /* not lint */
 
@@ -64,22 +64,22 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
-	if (init(argc, argv)) {		/* restored game */
-		goto PL;
-	}
+    if (init(argc, argv)) {		/* restored game */
+        goto PL;
+    }
 
-	for (;;) {
-		clear_level();
-		make_level();
-		put_objects();
-		put_stairs();
-		add_traps();
-		put_mons();
-		put_player(party_room);
-		print_stats(STAT_ALL);
-PL:		
-		play_level();
-		free_stuff(&level_objects);
-		free_stuff(&level_monsters);
-	}
+    for (;;) {
+        clear_level();
+        make_level();
+        put_objects();
+        put_stairs();
+        add_traps();
+        put_mons();
+        put_player(party_room);
+        print_stats(STAT_ALL);
+PL:
+        play_level();
+        free_stuff(&level_objects);
+        free_stuff(&level_monsters);
+    }
 }

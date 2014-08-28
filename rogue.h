@@ -191,10 +191,10 @@
 #define MAX_OPT_LEN 40
 
 struct id {
-	short value;
-	char *title;
-	char *real;
-	unsigned short id_status;
+    short value;
+    char *title;
+    char *real;
+    unsigned short id_status;
 };
 
 /* The following #defines provide more meaningful names for some of the
@@ -219,26 +219,26 @@ struct id {
 #define next_monster next_object
 
 struct obj {				/* comment is monster meaning */
-	unsigned long m_flags;	/* monster flags */
-	char *damage;			/* damage it does */
-	short quantity;			/* hit points to kill */
-	short ichar;			/* 'A' is for aquatar */
-	short kill_exp;			/* exp for killing it */
-	short is_protected;		/* level starts */
-	short is_cursed;		/* level ends */
-	short class;			/* chance of hitting you */
-	short identified;		/* 'F' damage, 1,2,3... */
-	unsigned short which_kind; /* item carry/drop % */
-	short o_row, o_col, o;	/* o is how many times stuck at o_row, o_col */
-	short row, col;			/* current row, col */
-	short d_enchant;		/* room char when detect_monster */
-	short quiver;			/* monster slowed toggle */
-	short trow, tcol;		/* target row, col */
-	short hit_enchant;		/* how many moves is confused */
-	unsigned short what_is;	/* imitator's charactor (?!%: */
-	short picked_up;		/* sleep from wand of sleep */
-	unsigned short in_use_flags;
-	struct obj *next_object;	/* next monster */
+    unsigned long m_flags;	/* monster flags */
+    char *damage;			/* damage it does */
+    short quantity;			/* hit points to kill */
+    short ichar;			/* 'A' is for aquatar */
+    short kill_exp;			/* exp for killing it */
+    short is_protected;		/* level starts */
+    short is_cursed;		/* level ends */
+    short class;			/* chance of hitting you */
+    short identified;		/* 'F' damage, 1,2,3... */
+    unsigned short which_kind; /* item carry/drop % */
+    short o_row, o_col, o;	/* o is how many times stuck at o_row, o_col */
+    short row, col;			/* current row, col */
+    short d_enchant;		/* room char when detect_monster */
+    short quiver;			/* monster slowed toggle */
+    short trow, tcol;		/* target row, col */
+    short hit_enchant;		/* how many moves is confused */
+    unsigned short what_is;	/* imitator's charactor (?!%: */
+    short picked_up;		/* sleep from wand of sleep */
+    unsigned short in_use_flags;
+    struct obj *next_object;	/* next monster */
 };
 
 typedef struct obj object;
@@ -254,38 +254,38 @@ typedef struct obj object;
 #define INIT_MOVES 1250
 
 struct fightr {
-	object *armor;
-	object *weapon;
-	object *left_ring, *right_ring;
-	short hp_current;
-	short hp_max;
-	short str_current;
-	short str_max;
-	object pack;
-	long gold;
-	short exp;
-	long exp_points;
-	short row, col;
-	short fchar;
-	short moves_left;
+    object *armor;
+    object *weapon;
+    object *left_ring, *right_ring;
+    short hp_current;
+    short hp_max;
+    short str_current;
+    short str_max;
+    object pack;
+    long gold;
+    short exp;
+    long exp_points;
+    short row, col;
+    short fchar;
+    short moves_left;
 };
 
 typedef struct fightr fighter;
 
 struct dr {
-	short oth_room;
-	short oth_row,
-	      oth_col;
-	short door_row,
-		  door_col;
+    short oth_room;
+    short oth_row,
+          oth_col;
+    short door_row,
+          door_col;
 };
 
 typedef struct dr door;
 
 struct rm {
-	short bottom_row, right_col, left_col, top_row;
-	door doors[4];
-	unsigned short is_room;
+    short bottom_row, right_col, left_col, top_row;
+    door doors[4];
+    unsigned short is_room;
 };
 
 typedef struct rm room;
@@ -330,8 +330,8 @@ typedef struct rm room;
 #define HIDE_PERCENT 12
 
 struct tr {
-	short trap_type;
-	short trap_row, trap_col;
+    short trap_type;
+    short trap_row, trap_col;
 };
 
 typedef struct tr trap;
@@ -463,18 +463,18 @@ long xxx();
 void byebye(), onintr(), error_save();
 
 struct rogue_time {
-	short year;		/* >= 1987 */
-	short month;	/* 1 - 12 */
-	short day;		/* 1 - 31 */
-	short hour;		/* 0 - 23 */
-	short minute;	/* 0 - 59 */
-	short second;	/* 0 - 59 */
+    short year;		/* >= 1987 */
+    short month;	/* 1 - 12 */
+    short day;		/* 1 - 31 */
+    short hour;		/* 0 - 23 */
+    short minute;	/* 0 - 59 */
+    short second;	/* 0 - 59 */
 };
 
 #ifdef CURSES
 struct _win_st {
-	short _cury, _curx;
-	short _maxy, _maxx;
+    short _cury, _curx;
+    short _maxy, _maxx;
 };
 
 typedef struct _win_st WINDOW;
