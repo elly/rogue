@@ -50,6 +50,7 @@ static char sccsid[] = "@(#)pack.c	8.1 (Berkeley) 5/31/93";
  *
  */
 
+#include <string.h>
 #include "rogue.h"
 
 char *curse_message = "you can't, it appears to be cursed";

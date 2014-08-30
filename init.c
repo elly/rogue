@@ -51,6 +51,7 @@ static char sccsid[] = "@(#)init.c	8.1 (Berkeley) 5/31/93";
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "rogue.h"
 
 char login_name[MAX_OPT_LEN];

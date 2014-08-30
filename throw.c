@@ -56,7 +56,9 @@ extern short cur_room;
 extern char *curse_message;
 extern char hit_message[];
 
-throw ()
+int rand_around(short i, short *r, short *c);
+
+void throw(void)
 {
     short wch, d;
     boolean first_miss = 1;
@@ -261,10 +263,9 @@ short row, col;
     }
 }
 
-rand_around(i, r, c)
-short i, *r, *c;
+int rand_around(short i, short *r, short *c)
 {
-    static char* pos = "\010\007\001\003\004\005\002\006\0";
+    static char pos[] = "\010\007\001\003\004\005\002\006\0";
     static short row, col;
     short j;
 

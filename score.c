@@ -50,6 +50,7 @@ static char sccsid[] = "@(#)score.c	8.1 (Berkeley) 5/31/93";
  *
  */
 
+#include <string.h>
 #include <stdio.h>
 #include "rogue.h"
 #include "pathnames.h"
@@ -336,7 +337,7 @@ object *monster;
             }
         }
     }
-    sprintf(buf, "%2d    %6d   %s: ", rank + 1, rogue.gold, login_name);
+    sprintf(buf, "%2d    %6ld   %s: ", rank + 1, rogue.gold, login_name);
 
     if (other) {
         switch (other) {

@@ -50,6 +50,7 @@ static char sccsid[] = "@(#)room.c	8.1 (Berkeley) 5/31/93";
  *
  */
 
+#include <string.h>
 #include "rogue.h"
 
 room rooms[MAXROOMS];

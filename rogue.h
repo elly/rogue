@@ -192,8 +192,8 @@
 
 struct id {
     short value;
-    char *title;
-    char *real;
+    char title[40];
+    char real[40];
     unsigned short id_status;
 };
 

@@ -50,6 +50,7 @@ static char sccsid[] = "@(#)inventory.c	8.1 (Berkeley) 5/31/93";
  *
  */
 
+#include <string.h>
 #include "rogue.h"
 
 boolean is_wood[WANDS];
@@ -412,14 +413,14 @@ int ch;
 mix_colors()
 {
     short i, j, k;
-    char *t;
+    char t[40];
 
     for (i = 0; i <= 32; i++) {
         j = get_rand(0, (POTIONS - 1));
         k = get_rand(0, (POTIONS - 1));
-        t = id_potions[j].title;
-        id_potions[j].title = id_potions[k].title;
-        id_potions[k].title = t;
+        strcpy(t, id_potions[j].title);
+        strcpy(id_potions[j].title, id_potions[k].title);
+        strcpy(id_potions[k].title, t);
     }
 }
 

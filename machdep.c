@@ -107,6 +107,13 @@ static char sccsid[] = "@(#)machdep.c	8.1 (Berkeley) 5/31/93";
 #include <termio.h>
 #endif
 
+#ifdef LINUX
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <termio.h>
+#endif
+
 #include <signal.h>
 #include "rogue.h"
 #include "pathnames.h"
@@ -125,7 +132,9 @@ static char sccsid[] = "@(#)machdep.c	8.1 (Berkeley) 5/31/93";
 
 md_slurp()
 {
+#ifndef LINUX
     (void) fpurge(stdin);
+#endif
 }
 
 /* md_control_keyboard():
@@ -464,11 +473,7 @@ char *
 md_malloc(n)
 int n;
 {
-    char *malloc();
-    char *t;
-
-    t = malloc(n);
-    return (t);
+    return malloc(n);
 }
 
 /* md_gseed() (Get Seed)
@@ -558,7 +563,7 @@ char *shell;
 
         uid = getuid();
         setuid(uid);
-        execl(shell, shell, 0);
+        execl(shell, shell, 0, NULL);
     }
     wait(w);
 }
