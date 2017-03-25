@@ -60,7 +60,7 @@ static char sccsid[] = "@(#)machdep.c	8.1 (Berkeley) 5/31/93";
  *
  * All UNIX code should be included between the single "#ifdef UNIX" at the
  * top of this file, and the "#endif" at the bottom.
- * 
+ *
  * To change a routine to include a new UNIX system, simply #ifdef the
  * existing routine, as in the following example:
  *
@@ -107,6 +107,13 @@ static char sccsid[] = "@(#)machdep.c	8.1 (Berkeley) 5/31/93";
 #include <termio.h>
 #endif
 
+#ifdef LINUX
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <termio.h>
+#endif
+
 #include <signal.h>
 #include "rogue.h"
 #include "pathnames.h"
@@ -125,7 +132,9 @@ static char sccsid[] = "@(#)machdep.c	8.1 (Berkeley) 5/31/93";
 
 md_slurp()
 {
-	(void)fpurge(stdin);
+#ifndef LINUX
+    (void) fpurge(stdin);
+#endif
 }
 
 /* md_control_keyboard():
@@ -149,53 +158,53 @@ md_slurp()
 md_control_keybord(mode)
 boolean mode;
 {
-	static boolean called_before = 0;
+    static boolean called_before = 0;
 #ifdef UNIX_BSD4_2
-	static struct ltchars ltc_orig;
-	static struct tchars tc_orig;
-	struct ltchars ltc_temp;
-	struct tchars tc_temp;
+    static struct ltchars ltc_orig;
+    static struct tchars tc_orig;
+    struct ltchars ltc_temp;
+    struct tchars tc_temp;
 #endif
 #ifdef UNIX_SYSV
-	static struct termio _oldtty;
-	struct termio _tty;
+    static struct termio _oldtty;
+    struct termio _tty;
 #endif
 
-	if (!called_before) {
-		called_before = 1;
+    if (!called_before) {
+        called_before = 1;
 #ifdef UNIX_BSD4_2
-		ioctl(0, TIOCGETC, &tc_orig);
-		ioctl(0, TIOCGLTC, &ltc_orig);
+        ioctl(0, TIOCGETC, &tc_orig);
+        ioctl(0, TIOCGLTC, &ltc_orig);
 #endif
 #ifdef UNIX_SYSV
-		ioctl(0, TCGETA, &_oldtty);
+        ioctl(0, TCGETA, &_oldtty);
 #endif
-	}
+    }
 #ifdef UNIX_BSD4_2
-	ltc_temp = ltc_orig;
-	tc_temp = tc_orig;
+    ltc_temp = ltc_orig;
+    tc_temp = tc_orig;
 #endif
 #ifdef UNIX_SYSV
-	_tty = _oldtty;
+    _tty = _oldtty;
 #endif
 
-	if (!mode) {
+    if (!mode) {
 #ifdef UNIX_BSD4_2
-		ltc_temp.t_suspc = ltc_temp.t_dsuspc = -1;
-		ltc_temp.t_rprntc = ltc_temp.t_flushc = -1;
-		ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
-		tc_temp.t_startc = tc_temp.t_stopc = -1;
+        ltc_temp.t_suspc = ltc_temp.t_dsuspc = -1;
+        ltc_temp.t_rprntc = ltc_temp.t_flushc = -1;
+        ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
+        tc_temp.t_startc = tc_temp.t_stopc = -1;
 #endif
 #ifdef UNIX_SYSV
-		_tty.c_cc[VSWTCH] = CNSWTCH;
+        _tty.c_cc[VSWTCH] = CNSWTCH;
 #endif
-	}
+    }
 #ifdef UNIX_BSD4_2
-	ioctl(0, TIOCSETC, &tc_temp);
-	ioctl(0, TIOCSLTC, &ltc_temp);
+    ioctl(0, TIOCSETC, &tc_temp);
+    ioctl(0, TIOCSLTC, &ltc_temp);
 #endif
 #ifdef UNIX_SYSV
-	ioctl(0, TCSETA, &_tty);
+    ioctl(0, TCSETA, &_tty);
 #endif
 }
 
@@ -217,9 +226,9 @@ boolean mode;
 
 md_heed_signals()
 {
-	signal(SIGINT, onintr);
-	signal(SIGQUIT, byebye);
-	signal(SIGHUP, error_save);
+    signal(SIGINT, onintr);
+    signal(SIGQUIT, byebye);
+    signal(SIGHUP, error_save);
 }
 
 /* md_ignore_signals():
@@ -236,9 +245,9 @@ md_heed_signals()
 
 md_ignore_signals()
 {
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGHUP, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
+    signal(SIGINT, SIG_IGN);
+    signal(SIGHUP, SIG_IGN);
 }
 
 /* md_get_file_id():
@@ -254,12 +263,12 @@ int
 md_get_file_id(fname)
 char *fname;
 {
-	struct stat sbuf;
+    struct stat sbuf;
 
-	if (stat(fname, &sbuf)) {
-		return(-1);
-	}
-	return((int) sbuf.st_ino);
+    if (stat(fname, &sbuf)) {
+        return (-1);
+    }
+    return ((int) sbuf.st_ino);
 }
 
 /* md_link_count():
@@ -274,10 +283,10 @@ int
 md_link_count(fname)
 char *fname;
 {
-	struct stat sbuf;
+    struct stat sbuf;
 
-	stat(fname, &sbuf);
-	return((int) sbuf.st_nlink);
+    stat(fname, &sbuf);
+    return ((int) sbuf.st_nlink);
 }
 
 /* md_gct(): (Get Current Time)
@@ -291,24 +300,24 @@ char *fname;
  * system doesn't provide all of the time units requested here, then you
  * can provide only those that it does, and return zeros for the others.
  * If you cannot provide good time values, then users may be able to copy
- * saved-game files and play them.  
+ * saved-game files and play them.
  */
 
 md_gct(rt_buf)
 struct rogue_time *rt_buf;
 {
-	struct tm *t, *localtime();
-	long seconds;
+    struct tm *t, *localtime();
+    long seconds;
 
-	time(&seconds);
-	t = localtime(&seconds);
+    time(&seconds);
+    t = localtime(&seconds);
 
-	rt_buf->year = t->tm_year;
-	rt_buf->month = t->tm_mon + 1;
-	rt_buf->day = t->tm_mday;
-	rt_buf->hour = t->tm_hour;
-	rt_buf->minute = t->tm_min;
-	rt_buf->second = t->tm_sec;
+    rt_buf->year = t->tm_year;
+    rt_buf->month = t->tm_mon + 1;
+    rt_buf->day = t->tm_mday;
+    rt_buf->hour = t->tm_hour;
+    rt_buf->minute = t->tm_min;
+    rt_buf->second = t->tm_sec;
 }
 
 /* md_gfmt: (Get File Modification Time)
@@ -322,7 +331,7 @@ struct rogue_time *rt_buf;
  * exactly the same here.
  * Or if md_gct() is implemented correctly, but your system does not provide
  * file modification dates, you may return some date far in the past so
- * that the program will never know that a saved-game file being modified.  
+ * that the program will never know that a saved-game file being modified.
  * You may also do this if you wish to be able to restore games from
  * saved-games that have been modified.
  */
@@ -331,20 +340,20 @@ md_gfmt(fname, rt_buf)
 char *fname;
 struct rogue_time *rt_buf;
 {
-	struct stat sbuf;
-	long seconds;
-	struct tm *t;
+    struct stat sbuf;
+    long seconds;
+    struct tm *t;
 
-	stat(fname, &sbuf);
-	seconds = (long) sbuf.st_mtime;
-	t = localtime(&seconds);
+    stat(fname, &sbuf);
+    seconds = (long) sbuf.st_mtime;
+    t = localtime(&seconds);
 
-	rt_buf->year = t->tm_year;
-	rt_buf->month = t->tm_mon + 1;
-	rt_buf->day = t->tm_mday;
-	rt_buf->hour = t->tm_hour;
-	rt_buf->minute = t->tm_min;
-	rt_buf->second = t->tm_sec;
+    rt_buf->year = t->tm_year;
+    rt_buf->month = t->tm_mon + 1;
+    rt_buf->day = t->tm_mday;
+    rt_buf->hour = t->tm_hour;
+    rt_buf->minute = t->tm_min;
+    rt_buf->second = t->tm_sec;
 }
 
 /* md_df: (Delete File)
@@ -362,10 +371,10 @@ boolean
 md_df(fname)
 char *fname;
 {
-	if (unlink(fname)) {
-		return(0);
-	}
-	return(1);
+    if (unlink(fname)) {
+        return (0);
+    }
+    return (1);
 }
 
 /* md_gln: (Get login name)
@@ -380,11 +389,12 @@ char *fname;
 char *
 md_gln()
 {
-	struct passwd *p;
+    struct passwd *p;
 
-	if (!(p = getpwuid(getuid())))
-		return((char *)NULL);
-	return(p->pw_name);
+    if (!(p = getpwuid(getuid()))) {
+        return ((char *) NULL);
+    }
+    return (p->pw_name);
 }
 
 /* md_sleep:
@@ -399,7 +409,7 @@ md_gln()
 md_sleep(nsecs)
 int nsecs;
 {
-	(void) sleep(nsecs);
+    (void) sleep(nsecs);
 }
 
 /* md_getenv()
@@ -443,12 +453,12 @@ char *
 md_getenv(name)
 char *name;
 {
-	char *value;
-	char *getenv();
+    char *value;
+    char *getenv();
 
-	value = getenv(name);
+    value = getenv(name);
 
-	return(value);
+    return (value);
 }
 
 /* md_malloc()
@@ -463,11 +473,7 @@ char *
 md_malloc(n)
 int n;
 {
-	char *malloc();
-	char *t;
-
-	t = malloc(n);
-	return(t);
+    return malloc(n);
 }
 
 /* md_gseed() (Get Seed)
@@ -481,7 +487,7 @@ int n;
  * You need to find some single random integer, such as:
  *   process id.
  *   current time (minutes + seconds) returned from md_gct(), if implemented.
- *   
+ *
  * It will not help to return "get_rand()" or "rand()" or the return value of
  * any pseudo-RNG.  If you don't have a random number, you can just return 1,
  * but this means your games will ALWAYS start the same way, and will play
@@ -490,7 +496,7 @@ int n;
 
 md_gseed()
 {
-	return(getpid());
+    return (getpid());
 }
 
 /* md_exit():
@@ -503,7 +509,7 @@ md_gseed()
 md_exit(status)
 int status;
 {
-	exit(status);
+    exit(status);
 }
 
 /* md_lock():
@@ -520,21 +526,22 @@ int status;
 md_lock(l)
 boolean l;
 {
-	static int fd;
-	short tries;
+    static int fd;
+    short tries;
 
-	if (l) {
-		if ((fd = open(_PATH_SCOREFILE, O_RDONLY)) < 1) {
-			message("cannot lock score file", 0);
-			return;
-		}
-		for (tries = 0; tries < 5; tries++)
-			if (!flock(fd, LOCK_EX|LOCK_NB))
-				return;
-	} else {
-		(void)flock(fd, LOCK_NB);
-		(void)close(fd);
-	}
+    if (l) {
+        if ((fd = open(_PATH_SCOREFILE, O_RDONLY)) < 1) {
+            message("cannot lock score file", 0);
+            return;
+        }
+        for (tries = 0; tries < 5; tries++)
+            if (!flock(fd, LOCK_EX | LOCK_NB)) {
+                return;
+            }
+    } else {
+        (void) flock(fd, LOCK_NB);
+        (void) close(fd);
+    }
 }
 
 /* md_shell():
@@ -549,16 +556,16 @@ boolean l;
 md_shell(shell)
 char *shell;
 {
-	long w[2];
+    long w[2];
 
-	if (!fork()) {
-		int uid;
+    if (!fork()) {
+        int uid;
 
-		uid = getuid();
-		setuid(uid);
-		execl(shell, shell, 0);
-	}
-	wait(w);
+        uid = getuid();
+        setuid(uid);
+        execl(shell, shell, 0, NULL);
+    }
+    wait(w);
 }
 
 /* If you have a viable curses/termlib library, then use it and don't bother
@@ -591,7 +598,7 @@ char *shell;
  * program is compiled with CURSES defined to use the enclosed curses
  * emulation package.  If you are not using this, then this routine is
  * totally unnecessary.
- * 
+ *
  * Notice that information is saved between calls.  This is used to
  * restore the terminal to an initial saved state.
  *
@@ -601,35 +608,35 @@ md_cbreak_no_echo_nonl(on)
 boolean on;
 {
 #ifdef UNIX_BSD4_2
-	static struct sgttyb tty_buf;
-	static int tsave_flags;
+    static struct sgttyb tty_buf;
+    static int tsave_flags;
 
-	if (on) {
-		ioctl(0, TIOCGETP, &tty_buf);
-		tsave_flags = tty_buf.sg_flags;
-		tty_buf.sg_flags |= CBREAK;
-		tty_buf.sg_flags &= ~(ECHO | CRMOD);	/* CRMOD: see note 3 above */
-		ioctl(0, TIOCSETP, &tty_buf);
-	} else {
-		tty_buf.sg_flags = tsave_flags;
-		ioctl(0, TIOCSETP, &tty_buf);
-	}
+    if (on) {
+        ioctl(0, TIOCGETP, &tty_buf);
+        tsave_flags = tty_buf.sg_flags;
+        tty_buf.sg_flags |= CBREAK;
+        tty_buf.sg_flags &= ~(ECHO | CRMOD);	/* CRMOD: see note 3 above */
+        ioctl(0, TIOCSETP, &tty_buf);
+    } else {
+        tty_buf.sg_flags = tsave_flags;
+        ioctl(0, TIOCSETP, &tty_buf);
+    }
 #endif
 #ifdef UNIX_SYSV
-	struct termio tty_buf;
-	static struct termio tty_save;
+    struct termio tty_buf;
+    static struct termio tty_save;
 
-	if (on) {
-		ioctl(0, TCGETA, &tty_buf);
-		tty_save = tty_buf;
-		tty_buf.c_lflag &= ~(ICANON | ECHO);
-		tty_buf.c_oflag &= ~ONLCR;
-		tty_buf.c_cc[4] = 1;  /* MIN */
-		tty_buf.c_cc[5] = 2;  /* TIME */
-		ioctl(0, TCSETAF, &tty_buf);
-	} else {
-		ioctl(0, TCSETAF, &tty_save);
-	}
+    if (on) {
+        ioctl(0, TCGETA, &tty_buf);
+        tty_save = tty_buf;
+        tty_buf.c_lflag &= ~(ICANON | ECHO);
+        tty_buf.c_oflag &= ~ONLCR;
+        tty_buf.c_cc[4] = 1;  /* MIN */
+        tty_buf.c_cc[5] = 2;  /* TIME */
+        ioctl(0, TCSETAF, &tty_buf);
+    } else {
+        ioctl(0, TCSETAF, &tty_save);
+    }
 #endif
 }
 
@@ -650,7 +657,7 @@ boolean on;
 char *
 md_gdtcf()
 {
-	return("/etc/termcap");
+    return ("/etc/termcap");
 }
 
 /* md_tstp():
@@ -665,7 +672,7 @@ md_gdtcf()
 md_tstp()
 {
 #ifdef UNIX_BSD4_2
-	kill(0, SIGTSTP);
+    kill(0, SIGTSTP);
 #endif
 }
 
